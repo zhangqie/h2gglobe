@@ -1476,13 +1476,13 @@ bool StatAnalysis::AnalyseEvent(LoopAll& l, Int_t jentry, float weight, TLorentz
 	if(includeTTHlep){
 	    if(isMC && applyBtagSF && (category==6 ||category ==7)){
 		//	    cout<<"ev"<<evweight<<endl;
-		evweight*=BtagReweight(l,shiftBtagEffUp_bc,shiftBtagEffDown_bc,shiftBtagEffUp_l,shiftBtagEffDown_l);
+		evweight*=BtagReweight(l,shiftBtagEffUp_bc,shiftBtagEffDown_bc,shiftBtagEffUp_l,shiftBtagEffDown_l,1);
 		//	    	        cout<<"evrew"<<evweight<<endl;
 	    }//shiftbtag end
 	}else if(includeVHhad){
 	    if(isMC && applyBtagSF && category==6 ){
 		//	    cout<<"ev"<<evweight<<endl;
-		evweight*=BtagReweight(l,shiftBtagEffUp_bc,shiftBtagEffDown_bc,shiftBtagEffUp_l,shiftBtagEffDown_l);
+		evweight*=BtagReweight(l,shiftBtagEffUp_bc,shiftBtagEffDown_bc,shiftBtagEffUp_l,shiftBtagEffDown_l,0);
 		//	    	        cout<<"evrew"<<evweight<<endl;
 	    }//shiftbtag end
 
@@ -1496,6 +1496,8 @@ bool StatAnalysis::AnalyseEvent(LoopAll& l, Int_t jentry, float weight, TLorentz
 	    //	    cout<<" weighted "<<evweight<<endl;
 	//cout<<"runNumber: "<<l.run<<" LumiSection:"<<l.lumis<<" eventNumber:"<<l.event<<endl; 
 	}
+
+
 
 	    
         return (category >= 0 && mass>=massMin && mass<=massMax);
@@ -1682,10 +1684,9 @@ void StatAnalysis::FillRooContainerSyst(LoopAll& l, const std::string &name, int
 // ----------------------------------------------------------------------------------------------------
 void StatAnalysis::computeExclusiveCategory(LoopAll & l, int & category, std::pair<int,int> diphoton_index, float pt, float diphobdt_output)
 {
+
     if (tHqLeptonicevent) {
-	category=nInclusiveCategories_ + ( (int)includeVBF )*nVBFCategories + ((int)includeTTHlep)+ ((int)includeTTHhad)+( (int)includeVHhad )*nVHhadEtaCategories +((int)includeVHhadBtag)+ nVHlepCategories+VHmetevent_cat;
-// 	$Id$	
-	category+=((int)includetHqLeptonic)*ntHqLeptonicCategories;
+	category=nInclusiveCategories_ + ( (int)includeVBF )*nVBFCategories + ((int)includeTTHlep)+ ((int)includeTTHhad)+( (int)includeVHhad )*nVHhadEtaCategories +((int)includeVHhadBtag)+ nVHlepCategories+((int) nVHmetCategories*includeVHmet);
 	//	cout<<"tHqLeptonic"<<category<<endl;
     } else  if(TTHlepevent) {
         category=nInclusiveCategories_ + ( (int)includeVBF )*nVBFCategories + 
@@ -2208,7 +2209,7 @@ void StatAnalysis::fillOpTree(LoopAll& l, const TLorentzVector & lead_p4, const 
     l.FillTree("itype", (int)l.itype[l.current]);
 	l.FillTree("run",(int)l.run);
 	l.FillTree("lumis",(int)l.lumis);
-	l.FillTree("event",(unsigned int)l.event);
+	l.FillTree("event",(int)l.event);
 	l.FillTree("weight",(float)weight);
 	l.FillTree("evweight",(float)evweight);
     float pu_weight = weight/l.sampleContainer[l.current_sample_index].weight; // contains also the smearings, not only pu
