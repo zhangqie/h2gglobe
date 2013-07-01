@@ -40,6 +40,15 @@
 #include "RooGlobalFunc.h"
 #include "RooCmdArg.h"
 
+//===Added by JTao===
+#include "RooProdPdf.h"
+#include "TH2F.h"
+#include "RooPolyVar.h"
+#include "RooPolynomial.h"
+#include "RooGenericPdf.h"
+#include "HiggsAnalysis/CombinedLimit/interface/HGGRooPdfs.h"
+//===Ended by JTao====
+
 // RooStats includes
 #include "RooWorkspace.h"
 
@@ -141,6 +150,24 @@ class RooContainer {
    bool save_systematics_data;
    bool verbosity_;
    bool save_roodatahists;
+
+  //=========Added by JTao====
+   void writeRooDataHist2D(std::string, TH2F *);
+   //void AppendDataSet(std::string, RooDataSet*);
+   void AppendTH2F(std::string, TH2F*);
+   void CreateDataSet2D(std::string, std::string, std::string, int nbinx, int nbiny, double x1=-990,double x2=-990, double y1=-999, double y2=-999); 
+   void InputDataPoint2D(std::string data_name,int cat, double x, double y, double w); // to fill 2D variables with event weights
+  //void InputDataPoint2D(std::string data_name, std::string var_namex, std::string var_namey, int cat, double x, double y, double w); // to fill 2D variables with event weights
+
+   void AddSpecificCategoryPdf2D(int *categories,std::string name,std::string formula,std::string obs_namex, std::string obs_namey, std::vector<std::string> & var, int form, double norm_guess, double norm_min, double norm_max);
+   void addGenericPdf2D(std::string name,std::string formula,std::string obs_namex, std::string obs_namey, std::vector<std::string> & var, int form, double norm_guess, double norm_min, double norm_max );
+
+
+   void FitToData2D(std::string,std::string,std::string,std::string,double x1,double x2,double y1,double y2);
+   void FitToData2D(std::string,std::string,std::string,std::string,double x1,double x2);
+   void FitToData2D(std::string,std::string,std::string,std::string);
+
+  //=========Ended by JTao====
 
   private:
 
@@ -245,7 +272,25 @@ class RooContainer {
    bool blind_data;
 
    RooWorkspace ws;   
-   
+
+  //=========Added by JTao====
+   std::map<std::string, RooProdPdf*> m_prod_;
+   std::map<std::string, TH2F> m_th2f_;
+   //std::map<std::string,RooDataSet> data2D_; 
+   void createDataSet2D(std::string, std::string, std::string,int nbinx, int nbiny, double x1,double x2, double y1, double y2);
+   std::map<std::string,std::string> data_obs_names2d_; 
+   std::map<std::string,RooRealVar*> m_data_varx_ptr_; 
+   std::map<std::string,RooRealVar*> m_data_vary_ptr_; 
+   std::map<std::string,int> binsx_;
+   std::map<std::string,int> binsy_;
+   std::map<std::string, double> m_varx_min_;
+   std::map<std::string, double> m_varx_max_;
+   std::map<std::string, double> m_vary_min_;
+   std::map<std::string, double> m_vary_max_;   
+
+   void fitToData2D(std::string,std::string,std::string,std::string, double,double,double,double);
+
+  //=========Ended by JTao====
 
 };
 
